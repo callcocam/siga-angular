@@ -1,0 +1,21 @@
+<ul class="pagination">
+    <li [class.disabled]="previousItemValid && firstText" (click)="firstPage()">
+        <a [innerHTML]="firstText">First</a>
+    </li>
+    <li>
+        <a [class.disabled]="previousItemValid" (click)="previousPage(nextItem)" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+        </a>
+    </li>
+    <li *ngFor="let pageNo of pageList" [ngClass]="{'active':seletedPage === pageNo}">
+        <a (click)="setCurrentPage(pageNo)">{{pageNo}}</a>
+    </li>
+    <li>
+        <a [class.disabled]="nextItemValid" (click)="nextPage(nextItem)" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+        </a>
+    </li>
+    <li>
+        <a [class.disabled]="nextItemValid && lastText" (click)="lastPage()" [innerHTML]="lastText">{{ nextItemValid }}Last</a>
+    </li>
+</ul>
