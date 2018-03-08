@@ -1,0 +1,22 @@
+<div class="btn-group">
+    <form action="/admin-controle-estoque/product/create" name="ajaxBoxForm" method="post" style="display: flex;float: left;">
+      <button style="margin-left: 10px;" class="actions btn btn-success btn-sm btn-flat ">
+        <i class="fa fa-plus-circle"></i>
+        Novo</button>
+    </form>
+    <button btnactions (emitState1)="updateState1(1)" style="margin-left: 10px;" class="actions btn btn-warning btn-sm btn-flat ">
+        <i class="fa fa-check"></i>
+        Ativar</button>
+    <button (emitState2)="updateState2(2)" style="margin-left: 10px;" class="actions btn btn-gray btn-sm btn-flat ">
+        <i class="fa fa-close"></i>
+        Desabilitar</button>
+    <button (emitState3)="updateState3(3)" style="margin-left: 10px;" class="actions btn bg-blue btn-sm btn-flat ">
+        <i class="fa fa-trash"></i>
+        Enviar p/ Lixeira</button>
+    <button style="margin-left: 10px;" class="actions btn bg-aqua btn-sm btn-flat ">
+        <i class="fa fa-plus-circle"></i>
+        Exportar</button>
+    <a href="/admin-controle-estoque/product/ajuda/6" id="6" style="margin-left: 10px;" class=" ajuda btn bg-purple btn-sm btn-flat ">
+      <i class="fa fa-question-circle"></i>
+      Ajuda</a>
+  </div>

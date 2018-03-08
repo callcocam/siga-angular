@@ -25,6 +25,7 @@
         "../node_modules/admin-lte/dist/css/AdminLTE.min.css",
         "../node_modules/admin-lte/dist/css/skins/_all-skins.min.css",
         "../node_modules/admin-lte/plugins/iCheck/all.css",
+        "../node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
         "../node_modules/admin-lte/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.css"
       ],
       "scripts": [

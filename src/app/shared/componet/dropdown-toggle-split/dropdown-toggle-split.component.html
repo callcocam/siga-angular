@@ -1,0 +1,13 @@
+<div class="btn-group" style="margin-left: 10px;" dropdown>
+  <button type="button" class="btn  btn-sm" [class.btn-warning]="itemSelected == 0"  [class.btn-success]="itemSelected == 1"  [class.btn-primary]="itemSelected == 2"  [class.btn-danger]="itemSelected == 3"> {{ label }}</button>
+  <button type="button" dropdownToggle class="btn dropdown-toggle dropdown-toggle-split  btn-sm" [class.btn-warning]="itemSelected == 0" [class.btn-success]="itemSelected == 1"  [class.btn-primary]="itemSelected == 2"  [class.btn-danger]="itemSelected == 3">
+    <span class="caret"></span>
+    <span class="sr-only">Split button!</span>
+  </button>
+  <ul *dropdownMenu class="dropdown-menu" role="menu">
+    <li *ngFor="let item of items" role="menuitem">
+      <a (click)="emitSelected(item)" class="dropdown-item">
+        <i *ngIf="item.icone" class="item.icone"></i>{{ item.label }}</a>
+    </li>
+  </ul>
+</div>

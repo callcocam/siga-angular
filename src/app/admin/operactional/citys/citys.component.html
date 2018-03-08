@@ -20,7 +20,6 @@
     <!--------------------------
       | Your Page Content Here |
       -------------------------->
-
     <div class="zf-table-wrap  form-inline">
       <div class="row">
         <div class="col-xs-12">
@@ -28,78 +27,37 @@
             <div class="box-header">
 
               <h3 class="box-title">
-                name
+                {{ resources.result.name }}
               </h3>
               <div class="box-tools">
 
                 <form [formGroup]="searchForm">
-                  <app-search-component>
+                  <app-search-component *ngIf="resources.result.showQuickSearch">
                     <input formControlName="searchControl" aria-controls="dataTable" class="quick-search form-control pull-right" placeholder="Search"
                       type="text" value="">
                   </app-search-component>
                
+                   <app-datepicker-btn-componet *ngIf="resources.result.showSelectedDate" (emiselectedDate)="selectedDate($event)"></app-datepicker-btn-componet>                  
 
-
-                <div class="form-group">
-                  <div class="input-group">
-                    <button type="button" style="margin-right: 10px;" class="btn btn-default btn-sm pull-right" id="daterange-btn">
-                      <span>
-
-                        <i class="fa fa-calendar"></i> Buscar Por Data
-                      </span>
-
-                      <i class="fa fa-caret-down"></i>
-                    </button>
-                  </div>
-                </div>
-                <input type="hidden" formControlName="startDatehControl"  id="start_date" value="">
-                <input type="hidden"formControlName="endDatehControl"  id="end_date" value="">
-
-
-                <label class="pull-right">
-                    <select class="form-control" formControlName="statusControl">
-                        <option *ngFor="let state of resources.result.itemCountPerPageValues" [value]="state">{{state}}</option>
-                      </select>                            
-                </label>
-
-                <label class="pull-right">
-                  <select style="margin-left: 10px;" class="itemPerPage form-control input-sm">
-                    showItemPerPage
-                  </select>
-                </label>
-              </form>
+                  <app-select-component *ngIf="resources.result.showColumnFilters">
+                    <select style="margin-left: 10px;" formControlName="statusControl" class="itemPerPage form-control input-sm" (change)="SelectPerPage($event)" >
+                      <option *ngFor="let item of resources.result.itemCountPerPageValues" [selected]="resources.result.paginator.itemCountPerPage" [value]="item">{{ item }}</option>
+                    </select>
+                  </app-select-component>
+                  <app-dropdown-toggle-split [items]="state" (Selected)="emitSelected($event)">
+                  </app-dropdown-toggle-split>
+                </form>
 
               </div>
             </div>
             <div class="mailbox-controls">
               <!-- Check all button -->
-              <div class="btn-group">
-                <form action="/admin-controle-estoque/product/create" name="ajaxBoxForm" method="post" style="display: flex;float: left;">
-                  <button style="margin-left: 10px;" class="actions btn btn-success btn-sm btn-flat ">
-                    <i class="fa fa-plus-circle"></i>
-                    Novo</button>
-                </form>
-                <a href="/admin-controle-estoque/product/state/1" id="1" style="margin-left: 10px;" class=" actions btn btn-warning btn-sm btn-flat ">
-                  <i class="fa fa-check"></i>
-                  Ativar</a>
-                <a href="/admin-controle-estoque/product/state/2" id="2" style="margin-left: 10px;" class=" actions btn bg-gray  btn-sm btn-flat">
-                  <i class="fa fa-close"></i>
-                  Desabilitar</a>
-                <a href="/admin-controle-estoque/product/state/3" id="3" style="margin-left: 10px;" class=" actions btn bg-blue btn-sm btn-flat ">
-                  <i class="fa fa-trash"></i>
-                  Enviar p/ Lixeira</a>
-                <a href="" id="" style="margin-left: 10px;" class=" export-csv btn bg-aqua btn-sm btn-flat ">
-                  <i class="fa fa-plus-circle"></i>
-                  Exportar</a>
-                <a href="/admin-controle-estoque/product/ajuda/6" id="6" style="margin-left: 10px;" class=" ajuda btn bg-purple btn-sm btn-flat ">
-                  <i class="fa fa-question-circle"></i>
-                  Ajuda</a>
-              </div>
+              <app-btn [value]="1" icone="fa fa-check" label="Ativar" [showTatus]="resources.paramsWrap.status" classBtn="btn btn-success btn-sm btn-flat" [showBtnActions]="resources.result.showBtnActions" (emitStatus)="updateState(1)"></app-btn>
+              <app-btn [value]="2" icone="fa fa-remove" label="Desativar"  [showTatus]="resources.paramsWrap.status" classBtn="btn btn-primary btn-sm btn-flat" [showBtnActions]="resources.result.showBtnActions" (emitStatus)="updateState(2)"></app-btn>
+              <app-btn [value]="3" icone="fa fa-trash" label="Enviar/Lixeira"  [showTatus]="resources.paramsWrap.status"  classBtn="btn btn-warning btn-sm btn-flat" [showBtnActions]="resources.result.showBtnActions" (emitStatus)="updateState(3)"></app-btn>
+              <app-delete label="Enviar/Lixeira" [showTatus]="resources.paramsWrap.status" (emitDelete)="delete()"></app-delete>
               <!-- /.btn-group -->
-              <div class="pull-right" style="margin-right: 10px;">
-                PAgina: {{resources.result.paginator.current}} De {{resources.result.paginator.pageCount}}
-                <!-- /.btn-group -->
-              </div>
+             
               <!-- /.pull-right -->
             </div>
             <!-- /.box-header -->
@@ -107,25 +65,39 @@
             <div class="box-body table-responsive">
 
 
-              <table class="table table table-responsive">
+              <table class="table table table-responsive" sortable-table (sorted)="onSorted($event)">
                 <thead>
                   <tr>
-                    <th *ngFor="let item of resources.result.paramsWrap.column"> {{ item.title }}</th>
+                    <th>
+                        <input class="minimal" (change)="onChange('all', $event.target.checked)" type="checkbox" value="all">
+                    </th>
+                    <th sortable-column="title" sort-direction="asc">Titulo</th>
+                    <th sortable-column="cep">Cep</th>
+                    <th sortable-column="uf">Uf</th>
+                    <th sortable-column="ibge">Ibge</th>
+                    <th sortable-column="created_at">Criado Em</th>
+                    <th sortable-column="status">Status</th>
                   </tr>
                 </thead>
-                <!-- <tbody  *ngIf="loading">
-                                  <tr><td><ngb-progressbar value="250"></ngb-progressbar></td></tr>
-                              </tbody> -->
+                <tbody *ngIf="loading">
+                  <tr>
+                    <td colspan="7">
+                      <progressbar max="200" [value]="166" type="danger" [striped]="true" [animate]="true">
+                        <i>166 / 200</i>
+                      </progressbar>
+                    </td>
+                  </tr>
+                </tbody>
                 <tbody *ngIf="!loading">
                   <tr *ngFor="let item of resources.result.sEcho">
                     <td>
-                      <input class="minimal" type="checkbox" value="{{ item.id }}[]">
+                      <input class="minimal" (change)="onChange(item.id, $event.target.checked)" type="checkbox" value="{{ item.id }}">
                     </td>
                     <td>{{ item.title }}</td>
                     <td>{{ item.cep }}</td>
                     <td>{{ item.ibge }}</td>
                     <td>{{ item.uf }}</td>
-                    <td>{{ item.created_at }}</td>
+                    <td>{{ item.created_at | date: 'dd/MM/yyyy' }}</td>
                     <td>{{ item.status }}</td>
                   </tr>
                 </tbody>
@@ -134,9 +106,15 @@
             <!-- /.box-body -->
             <div class="box-footer">
               <div class="row">
-                <div class="col-xs-12 col-12">
-                  <pagination [totalItems]="resources.result.iTotalDisplayRecords" (pageChanged)="pageChanged($event)" [rotate]=true [(ngModel)]="bigCurrentPage" [maxSize]="maxSize"
-                    class="pagination-sm" [boundaryLinks]="true" [rotate]="false" (numPages)="numPages = $event"></pagination>
+                <div class="col-xs-12 col-md-6">
+                  <pagination [totalItems]="resources.result.iTotalDisplayRecords" (pageChanged)="pageChanged($event)" [rotate]=true [(ngModel)]="curent"
+                    [maxSize]="maxSize" class="pagination-sm" [boundaryLinks]="true" [rotate]="false" (numPages)="numPages = $event"></pagination>
+                </div>
+                <div class="col-xs-12 col-md-6">
+                    <div class="pull-right" style="margin-right: 10px;">
+                        Pagina: {{resources.result.paginator.current}} De {{resources.result.paginator.pageCount}} Paginas De {{ resources.result.iTotalDisplayRecords }} Registros
+                        <!-- /.btn-group -->
+                      </div>
                 </div>
               </div>
             </div>
@@ -148,8 +126,10 @@
     </div>
 
 
-    <pre class="card card-block card-header">Page: {{bigCurrentPage}} / {{numPages}}</pre>
-    <pre class="card card-block card-header">{{ resources.result.itemCountPerPageValues | json }}</pre>
+    <pre class="card card-block card-header">Page: {{resources.result.paginator.current}} De {{resources.result.paginator.pageCount}}</pre>
+    <pre class="card card-block card-header">{{  this.resources.paramsWrap.order | json }}</pre>
+    <pre class="card card-block card-header">{{   resources.result.paramsWrap.column | json }}</pre>
+    <pre class="card card-block card-header">{{  resources.result.paginator.itemCountPerPage | json }}</pre>
   </section>
   <!-- /.content -->
 </div>
